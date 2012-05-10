@@ -2,4 +2,5 @@ Notes about this app:
 
 Uses Flash to access webcam
 Uses JSPrint Plugin for Mozilla to print image silently
+Has only been tested using macbook pro built-in webcam
 
