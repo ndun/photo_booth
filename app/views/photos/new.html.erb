@@ -1,0 +1,221 @@
+<div id="form">
+
+
+    <div id="holder"></div>
+    
+</div>
+
+<div id="webcam"></div>
+
+
+<style media="screen">
+            html {
+                height: 100%;
+            }
+            body {
+                color: #222;
+                font: 20px/1.4 "Lucida Grande", Lucida, Verdana, Helvetica, sans-serif;
+                height: 100%;
+            }
+            #holder {
+                height: 300px;
+                left: 300px;
+                overflow: hidden;
+                position: absolute;
+                top: 0;
+                width: 300px;
+                margin: 0;
+            }
+            #start_button {
+                    font: normal 36px arial, sans-serif;
+                        padding-left:100px;
+    padding-right:100px;
+            }
+            #form {
+                height: 300px;
+                left: 50%;
+                margin: -150px 0 0 -300px;
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                width: 600px;
+            }
+            
+            #webcam2 {
+                height: 300px;
+                left: 0;
+                overflow: hidden;
+                position: absolute;
+                top: 0;
+                width: 300px;
+                margin: 0;
+            }
+            form {
+                color: #fff;
+                left: 300px;
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                top: 0;
+                width: 300px;
+            }
+            dt {
+                clear: left;
+                float: left;
+                height: 2em;
+                width: 150px;
+            }
+            dd {
+                float: left;
+                height: 2em;
+                margin: 0;
+                padding: 0;
+            }
+            input {
+                font-size: 1em;
+                width: 4em;
+            }
+            p {
+                font: italic 20px/1.4 "Hoefler Text", Georgia, serif;
+                height: 100%;
+                margin: -3em;
+                width: 750px;
+            }
+            #copy {
+                bottom: auto;
+                color: #fff;
+                font-size: .5em;
+                right: 4em;
+                top: 300px;
+            }
+        </style>
+
+<script type="text/javascript">
+    function onload_complete(msg) {
+        // fetch the CSRF meta tag data
+        var csrf_param = $('meta[name=csrf-param]').attr('content');
+        var csrf_token = $('meta[name=csrf-token]').attr('content');
+        // reset the api URL appending the auth token parameter
+        webcam.set_api_url('<%= upload_photos_path %>' + '?' + csrf_param + "=" + encodeURI(encodeURI(csrf_token)));
+    }
+
+    function upload_complete(msg) {
+        if (msg == 'ok') {
+            $('#new_photo').show();
+            $('#photo_description').focus();
+        } else {
+            alert('An error occured');
+            webcam.reset();
+        }
+    }
+    
+    function resetCam() {
+        var tempfield = '<%= @photosession.id %>';
+//        alert(tempfield);
+//        webcam.reset();
+    }
+    var picCounter;
+    function startPics() {
+        picCounter = 0;
+        startCounter();
+    }
+    
+    function startCounter() {
+        remove = spinner("holder", 70, 120, 12, 25, "#f1f");
+    }
+    
+    webcam.set_swf_url('/webcam.swf');
+    webcam.set_api_url('<%= upload_photos_path %>');
+    webcam.set_quality(90);
+    webcam.set_shutter_sound(true, '/shutter.mp3');
+    webcam.set_hook('onLoad', 'onload_complete');
+    webcam.set_hook('onComplete', 'upload_complete');
+//    $('#webcam').html(webcam.get_html(320, 240));
+//    $('#webcam').html(webcam.get_html(640, 480));
+    $('#webcam').html(webcam.get_html(480, 480));
+    webcam.set_stealth(true);
+    var c=1;
+    var t;
+    var isTimerOn = false;
+        
+    function spinner(holderid, R1, R2, count, stroke_width, colour) {
+        var waitCounter =0;
+        var sectorsCount = count || 12,
+            color = colour || "#f1f",
+            width = stroke_width || 15,
+            r1 = Math.min(R1, R2) || 35,
+            r2 = Math.max(R1, R2) || 60,
+            cx = r2 + width,
+            cy = r2 + width,
+            r = Raphael(holderid, r2 * 2 + width * 2, r2 * 2 + width * 2),
+                    
+            sectors = [],
+            opacity = [],
+            beta = 2 * Math.PI / sectorsCount,
+            pathParams = {stroke: color, "stroke-width": width, "stroke-linecap": "round"};
+
+        Raphael.getColor.reset();
+        for (var i = 0; i < sectorsCount; i++) {
+            var alpha = beta * i - Math.PI / 2,
+                cos = Math.cos(alpha),
+                sin = Math.sin(alpha);
+            opacity[i] = 1 / sectorsCount * i;
+            sectors[i] = r.path([["M", cx + r1 * cos, cy + r1 * sin], ["L", cx + r2 * cos, cy + r2 * sin]]).attr(pathParams);
+            if (color == "rainbow") {
+                sectors[i].attr("stroke", Raphael.getColor());
+            }
+        }
+                
+        var tick;        
+        (function ticker() {
+            opacity.unshift(opacity.pop());
+            for (var i = 0; i < sectorsCount; i++) {
+                sectors[i].attr("opacity", opacity[i]);
+            }
+            r.safari();
+            waitCounter++;
+            if(waitCounter == 12) {                
+                clearTimeout(tick);
+                remove();
+                webcam.snap();
+                picCounter++;
+
+                var tempfield = '<%= @photosession.id %>';
+                $('#photo_photosession_id').val(tempfield);
+                $("#myForm").submit();
+                c++;
+                if(picCounter < 5) {
+                    startCounter();
+                } else {
+                    var tempfield = '<%= @photosession.id %>';
+                $('#photo_photosession_id').val(tempfield);
+                    window.location.replace("print");                    
+                }
+            }
+            tick = setTimeout(ticker, 5000 / sectorsCount);
+        })();
+            
+        return function () {
+            clearTimeout(tick);
+            r.remove();
+        };
+    }
+</script>
+
+
+    <input id="start_button" type="button" value="Click me to start!" onclick="startPics();"/>
+
+<%= form_for Photo.new, :remote => "true", :html => {:style => "display: none;", :id=>'myForm'} do |f| %>
+    <p>
+      <%= f.label :description %><br/>
+      <%= f.text_field :description %>
+    </p>
+    <p>
+        <%= f.label :photosession_id %><br/>
+        <%= f.text_field :photosession_id %>
+    </p>
+    <p>
+      <%= f.submit "Save the photo" %>
+      or <%= link_to "Take another", new_photo_path %>
+    </p>
+<% end %>

@@ -1,0 +1,39 @@
+/*
+ *= require_self
+ *= require_tree .
+*/
+
+#image_span {
+    padding-right:0px;
+    padding-left:0px;
+    padding-bottom:15px;
+}
+
+#image_group {
+    padding-bottom:10px;
+}
+
+
+
+.image_div {
+    margin: 0px auto 0px auto;
+    position: absolute;
+    left: 50%;
+    margin-left: -25%;
+    top:100px;
+}
+
+.button_div {
+    margin: 0px auto 0px auto;
+    position: absolute;
+    left: 50%;
+    margin-left: -25%;    
+}
+
+.picture_button {
+    padding-left:100px;
+    padding-right:100px;
+    text-align:center;
+    font: normal 36px arial, sans-serif;
+    width: 100%;
+}

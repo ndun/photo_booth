@@ -1,0 +1,60 @@
+<script type="text/javascript">
+//  $(document).ready(function() { alert('page loaded');});
+//  $('photo_prints').ready(
+//    function() {
+    
+//      alert('photo print loaded');
+      //window.print;
+//    }
+//  );
+//  window.print();
+
+  jsPrintSetup.setOption('marginTop', 0);
+  jsPrintSetup.setOption('marginBottom', 0);
+  jsPrintSetup.setOption('marginLeft', 0);
+  jsPrintSetup.setOption('marginRight', 0);
+   // set page header
+  jsPrintSetup.setOption('headerStrLeft', '');
+  jsPrintSetup.setOption('headerStrCenter', '');
+  jsPrintSetup.setOption('headerStrRight', '');
+   // set empty page footer
+  jsPrintSetup.setOption('footerStrLeft', '');
+  jsPrintSetup.setOption('footerStrCenter', '');
+  jsPrintSetup.setOption('footerStrRight', '');
+  jsPrintSetup.setPaperSizeUnit(jsPrintSetup.kPaperSizeInches);
+//alert('paper before: ' + jsPrintSetup.getPaperSizeData());
+  try {
+  jsPrintSetup.definePaperSize(255, 255, 'photocard', 'photocard', 'photocard', 4, 6, jsPrintSetup.kPaperSizeInches);
+  } catch(e) {
+    console.log(e);
+  }
+    jsPrintSetup.setOption('numCopies', 2);
+  jsPrintSetup.setPaperSizeData(255);//255);
+  jsPrintSetup.saveGlobalOptions(255);
+//  alert('paper measure: ' + jsPrintSetup.getPaperMeasure());
+//  alert(jsPrintSetup.getPaperSizeList());
+//alert('paper after: ' + jsPrintSetup.getPaperSizeData());
+
+  jsPrintSetup.setSilentPrint(1);
+//  jsPrintSetup.print();
+  jsPrintSetup.printWindow(window);
+//  jsPrintSetup.printWindow(window);
+    jsPrintSetup.setSilentPrint(1);
+</script>
+
+<div>
+  <a href="#"><img alt="610_card" src="/photo_booth_logo_15_2.png" /></a>
+</div>
+
+
+<% @session_photos.in_groups_of(2).each do |photogroup| %>
+  <div id="image_group">
+  <% photogroup.each do |photo| %>
+    <span id="image_span">
+      <%= link_to image_tag(photo.image.url(:card)) if photo %>
+    </span>
+  <% end %>
+  </div>
+  
+<% end %>
+

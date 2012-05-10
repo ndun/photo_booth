@@ -1,0 +1,15 @@
+<div>
+  <a href="#"><img alt="610_card" src="/photo_booth_logo_15_2.png" /></a>
+</div>
+
+<!--table id="photo_prints"-->  
+<% @session_photos.in_groups_of(2).each do |photogroup| %>
+  <div id="image_group">
+  <% photogroup.each do |photo| %>
+    <span id="image_span">
+      <%= link_to image_tag(photo.image.url(:card)) if photo %>
+    </span>
+  <% end %>
+  </div>
+  
+<% end %>
